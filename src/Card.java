@@ -120,9 +120,9 @@ public class Card {
         return hand;
     }
 
-    public static boolean canEliminate(Card a, Card b)
+    public static boolean canEliminate(Card a, Card b, int c)
     {
-        if (getNumValue(a) + getNumValue(b) == 11)
+        if (getNumValue(a) + getNumValue(b) + c == 11)
         {
             return true;
         }
@@ -130,7 +130,7 @@ public class Card {
     }
 
 
-    private static int getNumValue(Card q)
+    public static int getNumValue(Card q)
     {
         if (q.value.equals("A"))
         {

@@ -1,11 +1,8 @@
+import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.Point;
 import java.util.ArrayList;
-import java.awt.Font;
 
 class DrawPanel extends JPanel implements MouseListener {
 
@@ -50,8 +47,59 @@ class DrawPanel extends JPanel implements MouseListener {
         g.drawString("PLAY AGAIN", 170, 68);
         g.drawRect((int) buttonPlayAgain.getX(), (int) buttonPlayAgain.getY(), (int) buttonPlayAgain.getWidth(), (int) buttonPlayAgain.getHeight());
         g.drawString("Cards Remaining: " + Card.DECKY.size(), 150 + 100, 28);
+        boolean canContinue = false;
+        for (int i = 0; i < hand.size(); i++)
+        {
+            for (int j = 0; j < hand.size() && !canContinue; j++)
+            {
+                if (Card.getNumValue(hand.get(i)) + Card.getNumValue(hand.get(j)) == 11 && Card.DECKY.size() > 1) {
+//                    hand.set(i, Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
+//                    hand.set(j, Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
+                    canContinue = true;
+                }
+            }
+        }
+        if (!canContinue)
+        {
+            for (int i = 0; i < hand.size(); i++)
+            {
+                for (int j = 0; j < hand.size(); j++)
+                {
+                   for (int k = 0; k < hand.size() && !canContinue; k++)
+                   {
+                       if (allThreePresent(hand.get(i), hand.get(j), hand.get(k)) && Card.DECKY.size() > 2)
+                       {
+//                           hand.set(i, Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
+//                           hand.set(j, Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
+//                           hand.set(k, Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
+                           canContinue = true;
+                       }
+                   }
+                }
+            }
+        }
         g.drawRect((int) buttonReplaceCards.getX(), (int) buttonReplaceCards.getY(), (int) buttonReplaceCards.getWidth(), (int) buttonReplaceCards.getHeight());
         g.drawString("REPLACE CARDS", (int) buttonReplaceCards.getX() + 3, (int) buttonReplaceCards.getY() + 18);
+        if (Card.DECKY.isEmpty())
+        {
+            g.setColor(Color.MAGENTA);
+            g.setFont(new Font("Courier New", Font.BOLD, 80));
+            g.drawString("YOU WIN!!!", 100, 100);
+            g.setColor(Color.RED);
+            g.drawString("YOU WIN!!!", 150, 200);
+            g.setColor(Color.BLUE);
+            g.drawString("YOU WIN!!!", 50, 300);
+        }
+        if (!Card.DECKY.isEmpty() && !canContinue)
+        {
+            g.setColor(Color.MAGENTA);
+            g.setFont(new Font("Courier New", Font.BOLD, 80));
+            g.drawString("YOU LOSE!!!", 100, 100);
+            g.setColor(Color.RED);
+            g.drawString("YOU LOSE!!!", 150, 200);
+            g.setColor(Color.BLUE);
+            g.drawString("YOU LOSE!!!", 50, 300);
+        }
 
     }
 
@@ -69,25 +117,24 @@ class DrawPanel extends JPanel implements MouseListener {
             }
             if (buttonReplaceCards.contains(clicked))
             {
-                int indexFirst = 0;
-                int indexLast = 0;
-                System.out.println(highlightedCards);
-                System.out.println(Card.canEliminate(highlightedCards.getFirst(), highlightedCards.getLast()));
-                if (Card.canEliminate(highlightedCards.getFirst(), highlightedCards.getLast()))
+                if (highlightedCards.size() == 2)
                 {
-                    for (int i = 0; i < hand.size(); i++)
+                    if (Card.canEliminate(highlightedCards.getFirst(), highlightedCards.getLast(), 0))
                     {
-                        if (hand.get(i).equals(highlightedCards.getFirst()))
-                        {
-                            indexFirst = i;
-                        }
-                        if (hand.get(i).equals(highlightedCards.getLast()))
-                        {
-                            indexLast = i;
-                        }
+                        hand.set(hand.indexOf(highlightedCards.getFirst()), Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
+                        hand.set(hand.indexOf(highlightedCards.getLast()), Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
+                        highlightedCards.clear();
                     }
-                    hand.set(indexFirst, Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
-                    hand.set(indexLast, Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
+                }
+                System.out.println(highlightedCards);
+                if (highlightedCards.size() == 3) {
+                    if (allThreePresent(highlightedCards.get(0), highlightedCards.get(1), highlightedCards.get(2)))
+                    {
+                        hand.set(hand.indexOf(highlightedCards.get(0)), Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
+                        hand.set(hand.indexOf(highlightedCards.get(1)), Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
+                        hand.set(hand.indexOf(highlightedCards.get(2)), Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
+                        highlightedCards.clear();
+                    }
                 }
             }
 
@@ -102,13 +149,48 @@ class DrawPanel extends JPanel implements MouseListener {
             }
         }
 
+//        if (e.getButton() == 2) {
+//            for (int i = 0; i < hand.size(); i++) {
+//                for (int j = 0; j < hand.size(); j++) {
+//                    if (Card.getNumValue(hand.get(i)) + Card.getNumValue(hand.get(j)) == 11 && Card.DECKY.size() > 1) {
+//                        highlightedCards.add(hand.get(i));
+//                        highlightedCards.add(hand.get(j));
+//                        hand.get(i).flipHighlight();
+//                        hand.get(j).flipHighlight();
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+//
+//                for (int i = 0; i < hand.size(); i++)
+//                {
+//                    for (int j = 0; j < hand.size(); j++)
+//                    {
+//                        for (int k = 0; k < hand.size(); k++)
+//                        {
+//                            if (allThreePresent(hand.get(i), hand.get(j), hand.get(k)) && Card.DECKY.size() > 2)
+//                            {
+////                           hand.set(i, Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
+////                           hand.set(j, Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
+////                           hand.set(k, Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
+//                                hand.get(i).flipHighlight();
+//                                hand.get(j).flipHighlight();
+//                                hand.get(k).flipHighlight();
+//                                break;
+//
+//                            }
+//                        }
+//                    }
+//                }
+//        }
+
         // right click
         if (e.getButton() == 3) {
             for (int i = 0; i < hand.size(); i++) {
                 Rectangle box = hand.get(i).getCardBox();
                 if (box.contains(clicked) && hand.get(i).getHighlight()) {
                     hand.get(i).flipHighlight();
-                    hand.set(i, Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
                     highlightedCards.removeLast();
                 }
                 else if (box.contains(clicked))
@@ -126,4 +208,16 @@ class DrawPanel extends JPanel implements MouseListener {
     public void mouseEntered(MouseEvent e) { }
     public void mouseExited(MouseEvent e) { }
     public void mouseClicked(MouseEvent e) { }
+
+
+    public boolean allThreePresent(Card a, Card b, Card c)
+    {
+       String concat = a.getValue() + b.getValue() + c.getValue();
+       if (concat.contains("J") && concat.contains("Q") && concat.contains("K"))
+       {
+           return true;
+       }
+       return false;
+    }
+
 }
