@@ -161,7 +161,7 @@ class DrawPanel extends JPanel implements MouseListener {
 //                    }
 //                }
 //            }
-//        }
+//
 //
 //                for (int i = 0; i < hand.size(); i++)
 //                {
@@ -174,6 +174,9 @@ class DrawPanel extends JPanel implements MouseListener {
 ////                           hand.set(i, Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
 ////                           hand.set(j, Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
 ////                           hand.set(k, Card.DECKY.remove((int) (Math.random() * Card.DECKY.size())));
+//                                highlightedCards.add(hand.get(i));
+//                                highlightedCards.add(hand.get(j));
+//                                highlightedCards.add(hand.get(k));
 //                                hand.get(i).flipHighlight();
 //                                hand.get(j).flipHighlight();
 //                                hand.get(k).flipHighlight();
